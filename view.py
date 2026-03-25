@@ -13,6 +13,16 @@ class View(object):
         self.__title = None
         self.__theme_switch = None
 
+        self.__testo_messaggio=None
+        self.__scelta_lingua=None
+
+        self.__txt1 = ft.Text("")
+        self.__scelta_modalita=None
+
+
+
+
+
         # define the UI elements and populate the page
 
     def add_content(self):
@@ -26,14 +36,41 @@ class View(object):
                    alignment=ft.MainAxisAlignment.START)
         )
 
+        self.__scelta_lingua=ft.Dropdown(label="Seleziona la lingua",options=[ft.dropdown.Option("Italiano"),
+                                                                              ft.dropdown.Option("Inglese"),
+                                                                              ft.dropdown.Option("Spagnolo")],
+        on_change=self.__controller.handle_language_change)
+        self.__testo_messaggio=ft.Text("Nessuna lingua selezionata")
+        self.page.controls.append(ft.Row(controls=[self.__scelta_lingua,self.__testo_messaggio]))
+
+
+
+        self.__scelta_modalita = ft.Dropdown(label="Seleziona la modalità", options=[ft.dropdown.Option("Default"),
+                                                                                 ft.dropdown.Option("Lineare"),
+                                                                                 ft.dropdown.Option("Dicotonica")],
+                                            on_change=self.__controller.handle_modality_change)
+        self.__txt1=ft.Text("Nessuna modalità selezionata")
+
+        self.__txtDaInserire=ft.TextField(label="Inserisci testo:",text_align="CENTER")
+        self.__btnCorrezione=ft.ElevatedButton(label="Correzione automatica", on_click=self.__controller.handleSpellCheck)
+        self.page.controls.append(ft.Row(controls=[self.__scelta_modalita,self.__txt1,self.__txtDaInserire,self.__btnCorrezione]))
+
         # Add your stuff here
 
         # self.page.add([])
 
         self.page.update()
 
-    def update(self):
+    def update_lingua(self, messaggio):
+        self.__testo_messaggio.value = messaggio
+        self.__testo_messaggio.color = "green"
         self.page.update()
+
+    def update_modalita(self, messaggio):
+        self.__txt1.value = messaggio
+        self.__txt1.color = "blue"
+        self.page.update()
+
     def setController(self, controller):
         self.__controller = controller
     def theme_changed(self, e):

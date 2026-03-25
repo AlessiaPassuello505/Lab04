@@ -56,9 +56,28 @@ class SpellChecker:
               "4. Exit\n" +
               "______________________________\n")
 
+    def handle_language_change(self, e):
+        # Recuperiamo il valore
+        nuova_lingua = e.control.value
+        messaggio = f"Lingua selezionata: {nuova_lingua}"
+        # Chiamiamo il metodo della view che aggiorna la riga della LINGUA
+        self._view.update_lingua(messaggio)
+
+    def handle_modality_change(self, e):
+        # Recuperiamo il valore
+        nuova_mod = e.control.value
+        messaggio = f"Modalità selezionata: {nuova_mod}"
+        # Chiamiamo il metodo della view che aggiorna la riga della MODALITÀ
+        self._view.update_modalita(messaggio)
+
+    def handleSpellCheck(self,e):
+
+        self.handleSentence()
 
 def replaceChars(text):
     chars = "\\`*_{}[]()>#+-.!$?%^;,=_~"
     for c in chars:
         text = text.replace(c, "")
     return text
+
+
