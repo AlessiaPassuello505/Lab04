@@ -18,10 +18,10 @@ class View(object):
 
         self.__txt1 = ft.Text("")
         self.__scelta_modalita=None
+        self.__DaInserire=None
+        self.__btnCorrezione=None
 
-
-
-
+        self.__lv_output=ft.ListView(expand=1, spacing=10, padding=20, auto_scroll=True)
 
         # define the UI elements and populate the page
 
@@ -51,9 +51,13 @@ class View(object):
                                             on_change=self.__controller.handle_modality_change)
         self.__txt1=ft.Text("Nessuna modalità selezionata")
 
-        self.__txtDaInserire=ft.TextField(label="Inserisci testo:",text_align="CENTER")
-        self.__btnCorrezione=ft.ElevatedButton(label="Correzione automatica", on_click=self.__controller.handleSpellCheck)
+        self.__txtDaInserire=ft.TextField(label="Inserisci testo:", expand=True)
+        self.__btnCorrezione=ft.ElevatedButton(text="Correzione automatica", on_click=self.__controller.handleSpellCheck)
         self.page.controls.append(ft.Row(controls=[self.__scelta_modalita,self.__txt1,self.__txtDaInserire,self.__btnCorrezione]))
+
+        output_container=ft.Container(content=self.__lv_output,margin=10,
+                                      padding=10)
+        self.page.controls.append(output_container)
 
         # Add your stuff here
 
@@ -70,6 +74,18 @@ class View(object):
         self.__txt1.value = messaggio
         self.__txt1.color = "blue"
         self.page.update()
+
+        # ... (sotto update_modalita)
+
+    def append_to_output(self, messaggio):
+            """Aggiunge testo alla ListView e aggiorna la pagina"""
+            self.__lv_output.controls.append(ft.Text(messaggio))
+            self.page.update()
+
+    def clear_input_field(self):
+            """Pulisce il campo di testo"""
+            self.__txtDaInserire.value = ""
+            self.page.update()
 
     def setController(self, controller):
         self.__controller = controller

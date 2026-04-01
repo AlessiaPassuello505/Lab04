@@ -10,39 +10,30 @@ class SpellChecker:
 
     def handleSentence(self, txtIn, language, modality):
         txtIn = replaceChars(txtIn.lower())
-
         words = txtIn.split()
-        paroleErrate = " - "
+        parole_risultato = []
 
-        match modality:
-            case "Default":
-                t1 = time.time()
-                parole = self._multiDic.searchWord(words, language)
-                for parola in parole:
-                    if not parola.corretta:
-                        paroleErrate = paroleErrate + str(parola) + " - "
-                t2 = time.time()
-                return paroleErrate, t2 - t1
+        t1= time.time()
+        if modality=="Default":
+            parole = self._multiDic.searchWord(words, language)
 
-            case "Linear":
-                t1 = time.time()
-                parole = self._multiDic.searchWordLinear(words, language)
-                for parola in parole:
-                    if not parola.corretta:
-                        paroleErrate = paroleErrate + str(parola) + " "
-                t2 = time.time()
-                return paroleErrate, t2 - t1
+        elif modality== "Lineare":
+            parole = self._multiDic.searchWordLinear(words, language)
 
-            case "Dichotomic":
-                t1 = time.time()
-                parole = self._multiDic.searchWordDichotomic(words, language)
-                for parola in parole:
-                    if not parola.corretta:
-                        paroleErrate = paroleErrate + str(parola) + " - "
-                t2 = time.time()
-                return paroleErrate, t2 - t1
-            case _:
-                return None
+        elif modality=="Dicotonica":
+            parole = self._multiDic.searchWordDichotomic(words, language)
+
+        else:
+                return "Modalità non valida",0
+
+        for p in parole:
+            if not p.corretta:
+                parole_risultato.append(p._parola)
+
+        t2=time.time()
+
+        str_errate="-".join(parole_risultato) if parole_risultato else("Nessun errore")
+        return str_errate, t2-t1
 
 
     def printMenu(self):
@@ -71,8 +62,24 @@ class SpellChecker:
         self._view.update_modalita(messaggio)
 
     def handleSpellCheck(self,e):
+        lingua=self._view._View__scelta_lingua.value
+        modalita=self._view._View__scelta_modalita.value
+        testo_input=self._view._View__txtDaInserire.value
 
-        self.handleSentence()
+        #controllo validità campi
+        if lingua is None or modalita is None or testo_input.strip()=="":
+            self._view.append_to_output("Errore: Selezione lingua,modalità e inserisci testo non validi")
+            return
+
+        parole_errate, tempo=self.handleSentence(testo_input,lingua,modalita)
+
+        self._view.append_to_output(f"Frase inserita:{testo_input}")
+        self._view.append_to_output(f"Parole errate:{parole_errate}")
+        self._view.append_to_output(f"Tempo impiegato :{tempo}")
+
+        self._view.clear_input_field()
+
+
 
 def replaceChars(text):
     chars = "\\`*_{}[]()>#+-.!$?%^;,=_~"
